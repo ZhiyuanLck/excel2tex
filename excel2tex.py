@@ -197,13 +197,8 @@ class Table:
         self.set_parameters()
         # set output text
         n = 1
-        print(self.min_row, self.max_row, self.min_column, self.max_column)
-        print(len(self.cells))
         for i in range(self.min_row, self.max_row + 1):
-#          for r in self.cells:
-#              self.tex += f'% row {n}\n'
             row_tex = f'% row {n}\n'
-#              for cell in r:
             for j in range(self.min_column, self.max_column + 1):
                 cell = self.cells[i - self.min_row][j - self.min_column]
                 if cell.cell_type != "multicolumn_other" and cell.cell_type != "block_firstline_other":

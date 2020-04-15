@@ -32,10 +32,7 @@ optional arguments:
 
 You should obey some rules of how to create a table that can be successfully converted:
 
-1. The height of every merged cell must be greater than the number of lines in your text.
-2. Make sure that the height of every merged cell that cross rows is **even**.
-3. Make sure that any two merged cell that cross rows do not intersect vertically, i.e., they have no cells sharing the same row.
-4. Make the size of the merged cell suitable, i.e., do not give more space than that you need.
+- The height of every merged cell must be not less than the number of lines in your text.
 
 ## Example
 
