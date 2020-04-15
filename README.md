@@ -26,7 +26,7 @@ optional arguments:
   -s SOURCE   source file (default: table.xlsx)
   -o TARGET   target file (default: table.tex)
   --sig [ENCODING]  set file encoding to utf-8-sig, only use when there is mess code.
-  -m [MATH], --math [MATH] enabel inline math
+  -m [MATH], --math [MATH] enable inline math
 ```
 
 ## Note
