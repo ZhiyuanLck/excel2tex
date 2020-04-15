@@ -104,7 +104,7 @@ Excel table
 
 ![Excel table](img/excel_table2.png)
 
-Generated code in `table.tex`
+Generated code in `table.tex` by `python excel2tex -s table.xlsx --math`
 
 ```tex
 % Please add the following required packages to your document preamble:
