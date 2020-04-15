@@ -54,8 +54,9 @@ class MergedCell:
         return self.y2 == col_max
 
 class Table:
-    def __init__(self, ws):
+    def __init__(self, ws, args):
         self.ws = ws
+        self.args = args
         self.min_row = ws.min_row
         self.max_row = ws.max_row
         self.min_column = ws.min_column
@@ -131,6 +132,19 @@ class Table:
                 break
             j -= 1
 
+    def get_text(self, row, col):
+        text = self.ws.cell(row, col).value
+        if text is None:
+            text = ''
+        if type(text) != str:
+            text = str(text)
+        text = text.replace('#', r'\#')
+        text = text.replace('%', r'\%')
+        if not args.math:
+            text = text.replace('$', r'\$')
+        text = text.replace('\n', r' \\')
+        return text
+
     def set_parameters(self):
         self.cells = []
         # check type
@@ -141,12 +155,7 @@ class Table:
             cline_end = self.min_column - 1
             cline_start = True
             for j in range(self.min_column, self.max_column + 1):
-                text = self.ws.cell(i, j).value
-                if text is None:
-                    text = ''
-                if type(text) != str:
-                    text = str(text)
-                text = text.replace('\n', r' \\')
+                text = self.get_text(i, j)
                 cell_type = "plain"
                 parameters = {}
                 parameters["begin"] = True if j == self.min_column else False
@@ -233,10 +242,10 @@ if __name__ == '__main__':
             nargs='?',
             const='utf-8-sig',
             help='set file encoding to utf-8-sig, only use when there is mess code.')
+    parser.add_argument('-m', '--math', type=bool, default=False, dest='math', help='enabel inline math', const=True, nargs='?')
     args = parser.parse_args()
     wb = load_workbook(args.source)
     ws = wb.active
-    t = Table(ws)
-    print(args.encoding)
+    t = Table(ws, args)
     with open(args.target, 'w', encoding=args.encoding) as f:
         f.write(t.tex.replace('  &\n', '  &'))

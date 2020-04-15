@@ -26,6 +26,7 @@ optional arguments:
   -s SOURCE   source file (default: table.xlsx)
   -o TARGET   target file (default: table.tex)
   --sig [ENCODING]  set file encoding to utf-8-sig, only use when there is mess code.
+  -m [MATH], --math [MATH] enabel inline math
 ```
 
 ## Note
@@ -35,6 +36,8 @@ You should obey some rules of how to create a table that can be successfully con
 - The height of every merged cell must be not less than the number of lines in your text.
 
 ## Example
+
+### First
 
 Here is a excel table
 
@@ -95,6 +98,58 @@ Compile result: `main.pdf`
 
 ![LaTeX table](img/latex_table.png)
 
+### Second
+
+Excel table
+
+![Excel table](img/excel_table2.png)
+
+Generated code in `table.tex`
+
+```tex
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow, makecell}
+\begin{tabular}{*{7}{|c}|}
+\hline
+% row 1
+  \multirowcell{6}{10}
+  & \multicolumn{6}{c|}{11} \\
+\cline{2-7}
+% row 2
+  & \multirowcell{4}{6}
+  & \multicolumn{4}{c|}{7}
+  & \multirowcell{6}{12} \\
+\cline{3-6}
+% row 3
+  &  & \multirowcell{2}{2}
+  & \multicolumn{2}{c|}{3}
+  & \multirowcell{4}{8}
+  &  \\
+\cline{4-5}
+% row 4
+  &  &  & $x + y = z$
+  & \multirowcell{2}{4}
+  &  &  \\
+\cline{3-4}
+% row 5
+  &  & \multicolumn{2}{c|}{5}
+  &  &  &  \\
+\cline{2-5}
+% row 6
+  & \multicolumn{4}{c|}{9}
+  &  &  \\
+\cline{1-6}
+% row 7
+  \multicolumn{6}{|c|}{13}
+  &  \\
+\hline
+\end{tabular}
+```
+
+Generated table
+
+![LaTeX table](img/latex_table2.png)
+
 ## Trouble shooting
 
 ### Mess code
@@ -102,7 +157,7 @@ Compile result: `main.pdf`
 Try to set encoding to `utf-8-sig`, for example
 
 ```shell
-python excel2tex.py -s table.xlsx -o table.tex -e utf-8-sig
+python excel2tex.py -s table.xlsx -o table.tex --sig
 ```
 
 ### Missing vertical line or redundant empty row
