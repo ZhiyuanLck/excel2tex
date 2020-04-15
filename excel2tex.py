@@ -185,7 +185,7 @@ class Table:
         # set output text
         n = 1
         for r in self.cells:
-            self.tex += f'  % row {n}\n'
+            self.tex += f'% row {n}\n'
             for cell in r:
                 if cell.cell_type != "multicolumn_other" and cell.cell_type != "block_firstline_other":
                     out_text = cell.output()
@@ -193,10 +193,10 @@ class Table:
                     if n < self.max_row - self.min_row + 1 and cell.parameters['end']:
                         row_cline = self.cline_ranges[n - 1]
                         if len(row_cline) == 1 and row_cline[0][0] == self.min_column and row_cline[0][1] == self.max_column:
-                            out_text += ' \\hline'
+                            out_text += '\n\\hline'
                         else:
                             for cline_range in row_cline:
-                                out_text += ' \\cline{' + str(cline_range[0]) + '-' + str(cline_range[1]) + '}'
+                                out_text += '\n\\cline{' + str(cline_range[0]) + '-' + str(cline_range[1]) + '}'
                     if out_text:
                         self.tex += '  ' + out_text + '\n'
             n += 1
