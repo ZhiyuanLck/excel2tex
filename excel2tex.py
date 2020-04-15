@@ -230,10 +230,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             description='Convert excel table to latex table.',
             formatter_class=argparse.RawTextHelpFormatter,
-            epilog="""Note:
-1. The height of every merged cell must be greater than the number of lines in your text.
-2. Make sure that the height of every merged cell is even.
-3. Make the size of the merged cell suitable, i.e., do not give more space than that you need.
+            epilog="""Note: The height of every merged cell must not be less than the number of lines in your text.
 """
             )
     parser.add_argument('-s', default='table.xlsx', dest='source', help='source file (default: %(default)s)')

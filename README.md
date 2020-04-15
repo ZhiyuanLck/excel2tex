@@ -29,6 +29,8 @@ optional arguments:
   -m [MATH], --math [MATH] enable inline math
 ```
 
+If you are using windows and have no python installed, an executable file is provided [here](https://github.com/ZhiyuanLck/excel2tex/releases/tag/0.1)
+
 ## Note
 
 You should obey some rules of how to create a table that can be successfully converted:

@@ -2,3 +2,7 @@
 *.xlsx
 *.xls
 *.ipynb
+*.spec
+__pycache__
+build
+dist
