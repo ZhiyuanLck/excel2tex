@@ -211,11 +211,14 @@ if __name__ == '__main__':
 3. Make the size of the merged cell suitable, i.e., do not give more space than that you need.
 """
             )
-    parser.add_argument('-s', required=True, default='table.xlsx', dest='source', help='source file (default: %(default)s)')
-    parser.add_argument('-o', required=True, default='table.tex', dest='target', help='target file (default: %(default)s)')
+    parser.add_argument('-s', default='table.xlsx', dest='source', help='source file (default: %(default)s)')
+    parser.add_argument('-o', default='table.tex', dest='target', help='target file (default: %(default)s)')
+    parser.add_argument('-e', default='utf-8', dest='encoding',
+            choices=['utf-8', 'utf-8-sig'],
+            help='file encoding (default: %(default)s), if there is mess code, set it to utf-8-sig')
     args = parser.parse_args()
     wb = load_workbook(args.source)
     ws = wb.active
     t = Table(ws)
-    with open(args.target, 'w') as f:
+    with open(args.target, 'w', encoding=args.encoding) as f:
         f.write(t.tex.replace('  &\n', '  &'))
