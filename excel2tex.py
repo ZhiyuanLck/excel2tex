@@ -56,28 +56,33 @@ class MergedCell:
 class Table:
     def __init__(self, ws):
         self.ws = ws
-        self.set_bounds()
+        self.min_row = ws.min_row
+        self.max_row = ws.max_row
+        self.min_column = ws.min_column
+        self.max_column = ws.max_column
         self.merged_cells = [MergedCell(cell.bounds) for cell in ws.merged_cells.ranges]
         self.cline_ranges = []
         self.cells = []
         self.tex = '% Please add the following required packages to your document preamble:\n% \\usepackage{multirow, makecell}\n'
         self.tex += r'\begin{tabular}{*{' + str(self.max_column - self.min_column + 1) + '}{|c}|}\n'
         self.tex += '\\hline\n'
+        self.row_texs = []
         self.convert()
+        self.tex += ''.join(self.row_texs)
         self.tex += '\\hline\n'
         self.tex += '\\end{tabular}'
 
+    def is_empty(self, row, col):
+        return self.ws.cell(row, col).value is not None or self.cells[row -
+                self.ws.min_row][col - self.ws.min_column].parameters['merged_count']
+
     def set_bounds(self):
-        self.min_row = ws.min_row
-        self.max_row = ws.max_row
-        self.min_column = ws.min_column
-        self.max_column = ws.max_column
         # remove top empty rows
         i = self.ws.min_row
         while 1:
             empty = True
             for j in range(i, self.ws.max_column + 1):
-                if self.ws.cell(i, j).value is not None:
+                if self.is_empty(i, j):
                     empty = False
                     break
             if empty:
@@ -91,7 +96,7 @@ class Table:
         while 1:
             empty = True
             for j in range(self.ws.max_column, self.ws.min_column - 1, -1):
-                if self.ws.cell(i, j).value is not None:
+                if self.is_empty(i, j):
                     empty = False
                     break
             if empty:
@@ -104,7 +109,7 @@ class Table:
         while 1:
             empty = True
             for j in range(j, self.ws.max_row + 1):
-                if self.ws.cell(i, j).value is not None:
+                if self.is_empty(i, j):
                     empty = False
                     break
             if empty:
@@ -117,7 +122,7 @@ class Table:
         while 1:
             empty = True
             for i in range(self.ws.max_row, self.ws.min_row - 1, -1):
-                if self.ws.cell(i, j).value is not None:
+                if self.is_empty(i, j):
                     empty = False
                     break
             if empty:
@@ -126,7 +131,8 @@ class Table:
                 break
             j -= 1
 
-    def convert(self):
+    def set_parameters(self):
+        self.cells = []
         # check type
         for i in range(self.min_row, self.max_row + 1):
             row_cells = []
@@ -146,7 +152,7 @@ class Table:
                 parameters["begin"] = True if j == self.min_column else False
                 # real end or block end
                 parameters["end"] = True if j == self.max_column else False
-                parameters["merged_count"] = -1
+                parameters["merged_count"] = 0
                 merged_count = 1
                 for m in self.merged_cells:
                     if m.is_merged(i, j):
@@ -182,24 +188,39 @@ class Table:
             self.cells.append(row_cells)
             if i > self.min_row:
                 self.cline_ranges.append(row_cline)
+
+    def convert(self):
+        self.set_parameters()
+        # remove empty rows and cols
+        self.set_bounds()
+        # correct parameters
+        self.set_parameters()
         # set output text
         n = 1
-        for r in self.cells:
-            self.tex += f'% row {n}\n'
-            for cell in r:
+        print(self.min_row, self.max_row, self.min_column, self.max_column)
+        print(len(self.cells))
+        for i in range(self.min_row, self.max_row + 1):
+#          for r in self.cells:
+#              self.tex += f'% row {n}\n'
+            row_tex = f'% row {n}\n'
+#              for cell in r:
+            for j in range(self.min_column, self.max_column + 1):
+                cell = self.cells[i - self.min_row][j - self.min_column]
                 if cell.cell_type != "multicolumn_other" and cell.cell_type != "block_firstline_other":
                     out_text = cell.output()
+                    if out_text:
+                        out_text = '  ' + out_text + '\n'
                     # cline
                     if n < self.max_row - self.min_row + 1 and cell.parameters['end']:
                         row_cline = self.cline_ranges[n - 1]
                         if len(row_cline) == 1 and row_cline[0][0] == self.min_column and row_cline[0][1] == self.max_column:
-                            out_text += '\n\\hline'
+                            out_text += '\\hline'
                         else:
                             for cline_range in row_cline:
-                                out_text += '\n\\cline{' + str(cline_range[0]) + '-' + str(cline_range[1]) + '}'
-                    if out_text:
-                        self.tex += '  ' + out_text + '\n'
+                                out_text += '\\cline{' + str(cline_range[0]) + '-' + str(cline_range[1]) + '}\n'
+                    row_tex += out_text
             n += 1
+            self.row_texs.append(row_tex)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
