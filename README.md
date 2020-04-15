@@ -25,7 +25,7 @@ optional arguments:
   -h, --help  show this help message and exit
   -s SOURCE   source file (default: table.xlsx)
   -o TARGET   target file (default: table.tex)
-  -e {utf-8,utf-8-sig}  file encoding (default: utf-8), if there is mess code, set it to utf-8-sig
+  --sig [ENCODING]  set file encoding to utf-8-sig, only use when there is mess code.
 ```
 
 ## Note

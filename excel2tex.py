@@ -229,12 +229,14 @@ if __name__ == '__main__':
             )
     parser.add_argument('-s', default='table.xlsx', dest='source', help='source file (default: %(default)s)')
     parser.add_argument('-o', default='table.tex', dest='target', help='target file (default: %(default)s)')
-    parser.add_argument('-e', default='utf-8', dest='encoding',
-            choices=['utf-8', 'utf-8-sig'],
-            help='file encoding (default: %(default)s), if there is mess code, set it to utf-8-sig')
+    parser.add_argument('--sig', default='utf-8', dest='encoding',
+            nargs='?',
+            const='utf-8-sig',
+            help='set file encoding to utf-8-sig, only use when there is mess code.')
     args = parser.parse_args()
     wb = load_workbook(args.source)
     ws = wb.active
     t = Table(ws)
+    print(args.encoding)
     with open(args.target, 'w', encoding=args.encoding) as f:
         f.write(t.tex.replace('  &\n', '  &'))
