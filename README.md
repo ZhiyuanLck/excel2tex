@@ -18,7 +18,7 @@ pip install openpyxl
 
 ## Usage
 
-```shell
+```text
 usage: excel2tex.py [-h] -s SOURCE -o TARGET
 
 optional arguments:
