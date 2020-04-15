@@ -41,7 +41,7 @@ You should obey some rules of how to create a table that can be successfully con
 
 Here is a excel table
 
-![Excel table](https://raw.githubusercontent.com/ZhiyuanLck/excel2tex/master/img/excel_table.jpg)
+![Excel table](img/excel_table.jpg)
 
 `main.tex`
 
@@ -96,7 +96,7 @@ Generated `table.tex` by `python excel2tex.py -s table.xlsx -o table.tex`
 
 Compile result: `main.pdf`
 
-![LaTeX table](https://raw.githubusercontent.com/ZhiyuanLck/excel2tex/master/img/latex_table.jpg)
+![LaTeX table](img/latex_table.jpg)
 
 ## Trouble shooting
 
