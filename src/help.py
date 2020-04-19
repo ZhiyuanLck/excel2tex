@@ -6,5 +6,3 @@ def scan_all(cell_list, check):
         if getattr(cell, check)():
             return False
     return True
-
-colors = set()
