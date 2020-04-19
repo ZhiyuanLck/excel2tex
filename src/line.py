@@ -93,6 +93,8 @@ class LineMatrix:
             for j in range(self.col_axis):
                 x, y = self.get_coor(i, j, type)
                 self.borders[i][j].set_line(table, x, y, type)
+#                  if type == 'cline' and i == 4 and j == 5:
+#                      print(self.borders[i][j].style)
 
     def is_empty(self, line):
         for border in line:
@@ -134,7 +136,6 @@ class LineMatrix:
         res = []
         pre = Line()
         for border in cline[start_idx:end_idx + 1]:
-#              print(i, start_idx, pre.style, border.style, border.is_eql(pre))
             if not border.is_eql(pre):
                 # previous group end
                 if i > start_idx and pre.style:
@@ -142,12 +143,17 @@ class LineMatrix:
                     res.append(ClineRange(start + 1, end + 1, pre))
                 # new group begin
                 if border.style:
+#                      if i == end_idx:
+#                          print(i, pre.style, border.style)
                     start = i
                 # current group end
             if i == end_idx:
-                res.append(ClineRange(start + 1, i + 1, pre))
+                print(start, len(res), pre.style, border.style, border.is_eql(pre))
+                res.append(ClineRange(start + 1, i + 1, border))
+                print('test', res[-1].style.style)
             pre = copy(border)
             i += 1
+        print('test', res[-1].style.style)
         return res
 
     def get_cline_tex(self, cline_range):
