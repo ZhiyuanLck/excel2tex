@@ -271,9 +271,9 @@ class Table:
             self.row_texs.append(row_tex.replace('  &\n', '  &'))
 
     def convert_excel(self):
-        print(self.clines.get_cline_range(self.clines.borders[4])[1].style.style)
-        print(len(self.clines.borders[4]))
-        print(self.clines.borders[4][5].style)
+#          print(self.clines.get_cline_range(self.clines.borders[4])[1].style.style)
+#          print(len(self.clines.borders[4]))
+        print(self.clines.borders[2][2].style)
         n = 1
         for i in range(self.x1, self.x2 + 1):
             row_tex = f'\n% row {n}\n'

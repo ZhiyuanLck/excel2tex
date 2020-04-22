@@ -16,9 +16,7 @@ class Cell:
         self.begin = False
         self.end = False
         self.first_row = False
-        self.last_row = False
         self.first_col = False
-        self.last_col = False
         self.text_prop = TextProp(self.table)
         self.border = Border(self.table)
 

@@ -1,3 +1,146 @@
+## 要实现的功能
+
+### 基础功能
+
+文本
+
+- 颜色
+- 斜体、粗体
+- 对齐
+
+单元格
+
+- 颜色
+
+框线
+
+- 横线
+  - 宽度
+  - 颜色
+  - 样式
+- 竖线
+  - 宽度
+  - 颜色
+  - 样式
+
+### 组合
+合并单元格
+
+### 绘制过程
+1. 每一行hhline
+  - 基础属性设置
+2. 每一行单元格
+
+### 单个单元格语法
+
+- 每个单元格写成`\muticolumn`形式
+- 所有右侧竖线样式由`\muticolumn`控制
+- 每行第一个单元格控制左侧竖线样式
+- 单元格颜色在`\multicolumn`中设置而不是在`\multirowcell`中
+
+```tex
+\multicolumn{<cnum>}{<start vline> <align> <right vline>}{<cell color> <content>}
+```
+
+### 合并单元格语法
+
+- 合并单元格布局由合并单元格左下角单元格控制
+- `\multirowcell`中的对齐与`\multicolumn`中的对齐保持一致，即文本对齐方式
+- 除去左下角单元格，其他单元格文本为空，单元格颜色一致
+
+右侧竖线跳过的情形：
+- block列数大于1且不是一行最后一个单元格
+
+```tex
+% <content>内容
+\multirowcell{<rnum}[0ex][<align>]{<text>}
+```
+
+### 横线语法
+
+- 所有下侧横线样式在当前行换行符`\\`后由`\hhline`控制
+- 第一行单元格上侧的横线单独设置
+
+下侧横线填充颜色
+
+1. 无(无横线且无填充颜色)
+2. 虚线(线宽最大 或 单元格无填充颜色)
+3. 实线(线宽最大 或 单元格无填充颜色)
+4. 实线填充(单元与下面的单元格属于一个合并单元,且有填充颜色)
+5. 虚线+实线填充(线宽不是最大，且有填充颜色)
+6. 实线+实线填充(线宽不是最大，且有填充颜色)
+
+实际可以归纳为填充两个pattern，都用`\xleaders`实现，top pattern一定是实线，分别判断两个pattern是否需要填充（高度0pt）即可
+
+```tex
+%% horizontal line
+% colored solid line pattern
+% #1 color #2 width #3 height
+\newcommand{\hsp}[3]{\hbox{\textcolor{#1}{\rule{#2}{#3}}}}
+% colored dash line pattern
+% #1 color #2 width #3 height #4 style
+\newcommand{\hdp}[4]{\hbox{\textcolor{#1}{\hdashrule{#2}{#3}{#4}}}}
+% fill line
+% #1 top fill #2 bottom fill
+\newcommand{\leaderfill}[1]{%
+  \xleaders\hbox{%
+    \vbox{\baselineskip=0pt\lineskip=0pt#1}%
+  }\hfill%
+}
+% top: solid, bottom: solid
+% #1 top color, #2 bottom color, #3 common width to expand
+% #4 top height #5 bottom height
+\newcommand{\ssfill}[4]{%
+  \leaderfill{\hsp{#1}{0.01pt}{#3}\hsp{#2}{0.01pt}{#4}}%
+}
+% top: solid, bottom: dashed
+% #1 top color, #2 bottom color, #3 common width to expand
+% #4 top height #5 bottom height, #6 bottom dash line style
+\newcommand{\sdfill}[6]{%
+  \leaderfill{\hsp{#1}{#3}{#4}\hdp{#2}{#3}{#5}{#6}}%
+}
+% single solid
+% #1 height #2 color
+\newcommand{\sfill}[2]{%
+  \leaderfill{\hsp{#1}{0.01pt}{#2}}%
+}
+% single dash
+% #1 color #2 width #3 height #4 style
+\newcommand{\dfill}[4]{%
+  \leaderfill{\hdp{#1}{#2}{#3}{#4}}%
+}
+```
+
+采取竖线覆盖横线的方式（第一行和最后一行除外），`hhline`中对`|`需要有`\beforevline`设置，最后需要有`\aftervline`设置
+
+```tex
+\hhline{
+  <line style spec>
+  <line style spec>
+  …
+  <after settings>
+}
+```
+
+`<line style spec>`
+
+```tex
+>{<before settings>}
+!{<line style>}
+```
+
+相关宏命令
+```tex
+%% vline settings
+% #1 rule width #2 color
+\newcommand{\beforevline}[2]{%
+  \global\setlength\arrayrulewidth{#1}\arrayrulecolor{#2}%
+}
+\newcommand{\aftervline}{%
+  \global\setlength\arrayrulewidth{0.4pt}\arrayrulecolor{black}%
+}
+```
+
 # 步骤
 
 1. 初始化单元格矩阵: 确定idx, text属性
@@ -141,3 +284,7 @@ self.y2
 # todo
 - 检查异常的border
 ```
+
+### note
+math宽度不要太高
+已经知道的不兼容的包：`arydshln`, `stackengine`
