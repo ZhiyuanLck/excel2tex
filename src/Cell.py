@@ -15,6 +15,7 @@ class Cell:
         self.color = 'FFFFFF'
         self.begin = False
         self.end = False
+        self.control_cell = True
         self.first_row = False
         self.first_col = False
         self.text_prop = TextProp(self.table)
@@ -25,6 +26,8 @@ class Cell:
         self.align = self.cell.alignment.horizontal
         if self.merged_idx:
             self.color = self.head.color
+            row, col = self.coor
+            self.control_cell = self.table.merged_cells[self.merged_idx-1].is_control(row, col)
         else:
             color = self.cell.fill.bgColor.rgb
             if color != '00000000' and color is not None and isinstance(color, str):

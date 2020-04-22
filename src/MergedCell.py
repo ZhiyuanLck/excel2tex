@@ -24,3 +24,6 @@ class MergedCell:
 
     def get_head(self):
         return self.x1, self.y1
+
+    def is_control(self, row, col):
+        return row == self.x2 and col == self.y1

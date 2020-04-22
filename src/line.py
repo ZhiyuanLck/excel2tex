@@ -143,17 +143,12 @@ class LineMatrix:
                     res.append(ClineRange(start + 1, end + 1, pre))
                 # new group begin
                 if border.style:
-#                      if i == end_idx:
-#                          print(i, pre.style, border.style)
                     start = i
                 # current group end
             if i == end_idx:
-#                  print(start, len(res), pre.style, border.style, border.is_eql(pre))
                 res.append(ClineRange(start + 1, i + 1, border))
-#                  print('test', res[-1].style.style)
             pre = copy(border)
             i += 1
-#          print('test', res[-1].style.style)
         return res
 
     def get_cline_tex(self, cline_range):
