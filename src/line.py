@@ -9,20 +9,20 @@ class ClineRange:
 class Line:
     style_dic = {
             #                         line_number
-            #                    is_dash | l_n | width  |  dash_width | gap_width
-            'thin':             (False,    1,    0.4,      0.4,         0.4),
-            'medium':           (False,    1,    0.6,      0.4,         0.4),
-            'thick':            (False,    1,    0.8,      0.4,         0.4),
-            'double':           (False,    2,    0.4,      0.4,         0.4),
-            'hair':             (True,     1,    0.4,      0.4,         0.4),
-            'dotted':           (True,     1,    0.4,      0.4,         0.4),
-            'dashed':           (True,     1,    0.4,      0.4,         0.4),
-            'dashDot':          (True,     1,    0.4,      0.4,         0.4),
-            'dashDotDot':       (True,     1,    0.4,      0.4,         0.4),
-            'mediumDashed':     (True,     1,    0.4,      0.4,         0.4),
-            'mediumDashDot':    (True,     1,    0.4,      0.4,         0.4),
-            'mediumDashDotDot': (True,     1,    0.4,      0.4,         0.4),
-            'slantDashDot':     (True,     1,    0.4,      0.4,         0.4),
+            #                    is_dash | l_n | width  |  dash_style
+            'thin':             (False,    1,    0.4,      ''),
+            'medium':           (False,    1,    0.6,      ''),
+            'thick':            (False,    1,    0.8,      ''),
+            'double':           (False,    2,    0.4,      ''),
+            'hair':             (True,     1,    0.4,      ''),
+            'dotted':           (True,     1,    0.4,      ''),
+            'dashed':           (True,     1,    0.4,      ''),
+            'dashDot':          (True,     1,    0.4,      ''),
+            'dashDotDot':       (True,     1,    0.4,      ''),
+            'mediumDashed':     (True,     1,    0.4,      ''),
+            'mediumDashDot':    (True,     1,    0.4,      ''),
+            'mediumDashDotDot': (True,     1,    0.4,      ''),
+            'slantDashDot':     (True,     1,    0.4,      ''),
             }
     def __init__(self):
         self.style = None
@@ -30,15 +30,13 @@ class Line:
         self.is_dash = False
         self.line_number = 1
         self.width = 0.4
-        self.dash_width = 0.4
-        self.gap_width = 0.4
+        self.dash_style = ''
         self.is_colored = False
         self.color = None
 
     def set_style(self, style):
         self.style = style
-        (self.is_dash, self.line_number, self.width, self.dash_width,
-                self.gap_width) = self.style_dic[style]
+        (self.is_dash, self.line_number, self.width, self.dash_style) = self.style_dic[style]
 
     def get_hline(self, table, i, j):
         if j == 0:
@@ -76,25 +74,17 @@ class LineMatrix:
     def __init__(self, table, type):
         # befor set_bounds
         self.table = table
-        x_max = table.x2 - 1
-        y_max = table.y2 - 1
-        self.row_axis = x_max if type == 'cline' else y_max
-        self.col_axis = y_max if type == 'cline' else x_max
+        self.x_max = table.x2 - 1
+        self.y_max = table.y2 - 1
         self.borders = [[Line()
-            for j in range(self.col_axis)]
-            for i in range(self.row_axis)]
-
-    def get_coor(self, i, j, type):
-        return (i, j) if type == 'cline' else (j, i)
+            for j in range(self.y_max)]
+            for i in range(self.x_max)]
 
     # after set_props
-    def set_lines(self, table, type):
-        for i in range(self.row_axis):
-            for j in range(self.col_axis):
-                x, y = self.get_coor(i, j, type)
-                self.borders[i][j].set_line(table, x, y, type)
-                if type == 'cline' and i == 2 and j == 2:
-                    print(self.borders[i][j].style)
+    def set_lines(self, type):
+        for i in range(self.x_max):
+            for j in range(self.y_max):
+                self.borders[i][j].set_line(self.table, i, j, type)
 
     def is_empty(self, line):
         for border in line:

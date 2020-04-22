@@ -22,9 +22,9 @@ class Table:
         self.clines = LineMatrix(self, 'cline')
         self.hlines = LineMatrix(self, 'hline')
         self.set_bounds()
-        self.clines.set_lines(self, 'cline')
+        self.clines.set_lines('cline')
         self.clines.set_vspace()
-        self.hlines.set_lines(self, 'hline')
+        self.hlines.set_lines('hline')
         if self.args.excel_format:
             self.set_line_bounds()
         self.set_props()
@@ -91,10 +91,10 @@ class Table:
         cell_y_max = len(cline_transpose)
         # cell x
         cell_x_min = 1
-        cell_x_max = len(hline_transpose)
+        cell_x_max = len(self.hlines.borders)
         # hline y
         hline_y_min = 1
-        hline_y_max = len(self.hlines.borders)
+        hline_y_max = len(hline_transpose)
         # cline remove empty row line
         for cline in self.clines.borders:
             if self.clines.is_empty(cline):
@@ -118,23 +118,23 @@ class Table:
             else:
                 break
         # hline remove empty col line
-        for hline in self.hlines.borders:
+        for hline in hline_transpose:
             if self.hlines.is_empty(hline):
                 hline_y_min += 1
             else:
                 break
-        for hline in self.hlines.borders[::-1]:
+        for hline in hline_transpose[::-1]:
             if self.hlines.is_empty(hline):
                 hline_y_max -= 1
             else:
                 break
         # hline remove empty row cell
-        for hline in hline_transpose:
+        for hline in self.hlines.borders:
             if self.hlines.is_empty(hline):
                 cell_x_min += 1
             else:
                 break
-        for hline in hline_transpose[::-1]:
+        for hline in self.hlines.borders[::-1]:
             if self.hlines.is_empty(hline):
                 cell_x_max -= 1
             else:
@@ -271,9 +271,6 @@ class Table:
             self.row_texs.append(row_tex.replace('  &\n', '  &'))
 
     def convert_excel(self):
-#          print(self.clines.get_cline_range(self.clines.borders[4])[1].style.style)
-#          print(len(self.clines.borders[4]))
-        print(self.clines.borders[2][2].style)
         n = 1
         for i in range(self.x1, self.x2 + 1):
             row_tex = f'\n% row {n}\n'
