@@ -10,42 +10,55 @@ class Line:
     style_dic = {
             #                         line_number
             #                    is_dash | l_n | width  |  dash_style
-            'thin':             (False,    1,    0.4,      ''),
-            'medium':           (False,    1,    0.6,      ''),
-            'thick':            (False,    1,    0.8,      ''),
-            'double':           (False,    2,    0.4,      ''),
-            'hair':             (True,     1,    0.4,      ''),
-            'dotted':           (True,     1,    0.4,      ''),
-            'dashed':           (True,     1,    0.4,      ''),
-            'dashDot':          (True,     1,    0.4,      ''),
-            'dashDotDot':       (True,     1,    0.4,      ''),
-            'mediumDashed':     (True,     1,    0.4,      ''),
-            'mediumDashDot':    (True,     1,    0.4,      ''),
-            'mediumDashDotDot': (True,     1,    0.4,      ''),
-            'slantDashDot':     (True,     1,    0.4,      ''),
+            'thin':             (False,    1,    0.4,      [1, 1]),
+            'medium':           (False,    1,    0.6,      [1, 1]),
+            'thick':            (False,    1,    0.8,      [1, 1]),
+            'double':           (False,    2,    0.4,      [1, 1]),
+            'hair':             (True,     1,    0.4,      [1, 1]),
+            'dotted':           (True,     1,    0.4,      [1, 1]),
+            'dashed':           (True,     1,    0.4,      [1, 1]),
+            'dashDot':          (True,     1,    0.4,      [1, 1]),
+            'dashDotDot':       (True,     1,    0.4,      [1, 1]),
+            'mediumDashed':     (True,     1,    0.4,      [1, 1]),
+            'mediumDashDot':    (True,     1,    0.4,      [1, 1]),
+            'mediumDashDotDot': (True,     1,    0.4,      [1, 1]),
+            'slantDashDot':     (True,     1,    0.4,      [1, 1]),
             }
     def __init__(self):
         self.style = None
         self.is_none = True
         self.is_dash = False
         self.line_number = 1
-        self.width = 0.4
-        self.dash_style = ''
+        self.width = 0
+        self.dash_style = []
         self.is_colored = False
         self.color = None
+        # 第一行的顶端的横线
+        self.first_hline = False
+        # 表格末尾的横线
+        self.last_hline = False
+        # 表格左侧的竖线
+        self.first_vline = False
+        self.ignored = False
+
+    def format_dash(self):
+        return 'pt '.join([str(x) for x in self.dash_style]) + 'pt'
+
+    def get_dash_width(self):
+        return str(sum(self.dash_style)) + 'pt'
 
     def set_style(self, style):
         self.style = style
         (self.is_dash, self.line_number, self.width, self.dash_style) = self.style_dic[style]
 
-    def get_hline(self, table, i, j):
+    def get_vline(self, table, i, j):
         if j == 0:
             return table.cells[i][j].border.left
         left = table.cells[i][j - 1].border.right
         right = table.cells[i][j].border.left
         return left if left.style is not None else right
 
-    def get_cline(self, table, i, j):
+    def get_hline(self, table, i, j):
         if i == 0:
             return table.cells[i][j].border.top
         up = table.cells[i - 1][j].border.bottom
@@ -53,13 +66,26 @@ class Line:
         return up if up.style is not None else down
 
     def set_line(self, table, i, j, type):
-        border = self.get_cline(table, i, j) if type == 'cline' else self.get_hline(table, i, j)
+        if i + 1 == table.x1:
+            self.first_hline = True
+        if i == table.x2:
+            self.last_hline = True
+        if j + 1 == table.y1:
+            self.first_vline = True
+        if type == 'hline' and i > table.x1 - 1 and i < table.x2:
+            self.ignored = table.cells[i - 1][j].merged_idx == table.cells[i][j].merged_idx
+        if type == 'vline' and j > table.y1 - 1 and j < table.y2:
+            self.ignored = table.cells[i][j - 1].merged_idx == table.cells[i][j].merged_idx
+        border = self.get_hline(table, i, j) if type == 'hline' else self.get_vline(table, i, j)
         if border.style is not None:
             self.is_none = False
             self.set_style(border.style)
             if border.color is not None:
                 self.is_colored = True
                 self.color = border.color
+                table.colors.add(self.color)
+            else:
+                self.color = 'black'
 
     def is_eql(self, line):
         if self.style != line.style:
@@ -76,6 +102,7 @@ class LineMatrix:
         self.table = table
         self.x_max = table.x2 - 1
         self.y_max = table.y2 - 1
+        self.max_width = []
         self.borders = [[Line()
             for j in range(self.y_max)]
             for i in range(self.x_max)]
@@ -83,8 +110,12 @@ class LineMatrix:
     # after set_props
     def set_lines(self, type):
         for i in range(self.x_max):
+            max_w = 0
             for j in range(self.y_max):
-                self.borders[i][j].set_line(self.table, i, j, type)
+                border = self.borders[i][j]
+                border.set_line(self.table, i, j, type)
+                max_w = max(border.width, max_w)
+            self.max_width.append(max_w)
 
     def is_empty(self, line):
         for border in line:
@@ -99,24 +130,24 @@ class LineMatrix:
                 return False
         return True
 
-    def cut_range(self, cline):
-        start_idx = len(cline) - 1
+    def cut_range(self, hline):
+        start_idx = len(hline) - 1
         end_idx = 0
-        for i in range(len(cline)):
-            if cline[i].style:
+        for i in range(len(hline)):
+            if hline[i].style:
                 start_idx = i
                 break
-        for i in range(len(cline) - 1, -1, -1):
-            if cline[i].style:
+        for i in range(len(hline) - 1, -1, -1):
+            if hline[i].style:
                 end_idx = i
                 break
         return start_idx, end_idx
 
-    def get_cline_range(self, cline):
-        start_idx, end_idx = self.cut_range(cline)
+    def get_hline_range(self, hline):
+        start_idx, end_idx = self.cut_range(hline)
         # one line
         if start_idx == end_idx:
-            return [ClineRange(start_idx, end_idx, cline[0])]
+            return [hlineRange(start_idx, end_idx, hline[0])]
         # none line
         if end_idx == 0:
             return []
@@ -125,7 +156,7 @@ class LineMatrix:
         end = end_idx
         res = []
         pre = Line()
-        for border in cline[start_idx:end_idx + 1]:
+        for border in hline[start_idx:end_idx + 1]:
             if not border.is_eql(pre):
                 # previous group end
                 if i > start_idx and pre.style:
@@ -141,13 +172,13 @@ class LineMatrix:
             i += 1
         return res
 
-    def get_cline_tex(self, cline_range):
+    def get_hline_tex(self, hline_range):
         tex = ''
-        style = cline_range.style
+        style = hline_range.style
         if style.is_dash:
-            tex += '\\cdashline{' + str(cline_range.start) + '-' + str(cline_range.end) + '}'
+            tex += '\\cdashline{' + str(hline_range.start) + '-' + str(hline_range.end) + '}'
         elif not style.is_none:
-            tex += '\\cmidrule[' + str(style.width) + 'pt' + ']{' + str(cline_range.start) + '-' + str(cline_range.end) + '}'
+            tex += '\\cmidrule[' + str(style.width) + 'pt' + ']{' + str(hline_range.start) + '-' + str(hline_range.end) + '}'
         if style.is_colored:
             tex = '\\colorwrap{' + style.color + '}' + '{' + tex + '}'
         # not support
@@ -156,23 +187,23 @@ class LineMatrix:
         return tex
 
     def set_vspace(self):
-        for cline in self.borders:
-            cline_ranges = self.get_cline_range(cline)
+        for hline in self.borders:
+            hline_ranges = self.get_hline_range(hline)
             max_width = 0
-            for cline_range in cline_ranges:
-                if not cline_range.style.is_dash:
-                    max_width = max(0.4, max_width, cline_range.style.width)
+            for hline_range in hline_ranges:
+                if not hline_range.style.is_dash:
+                    max_width = max(0.4, max_width, hline_range.style.width)
             self.table.vspace += max_width
 
-    def get_row_cline_tex(self, cline):
+    def get_row_hline_tex(self, hline):
         tex = ''
-        cline_ranges = self.get_cline_range(cline)
-        if not cline_ranges:
+        hline_ranges = self.get_hline_range(hline)
+        if not hline_ranges:
             return tex
 #          max_width = 0
-        for cline_range in cline_ranges:
-#              if not cline_range.style.is_dash:
-#                  max_width = max(0.4, max_width, cline_range.style.width)
-            tex += self.get_cline_tex(cline_range) + '\n'
+        for hline_range in hline_ranges:
+#              if not hline_range.style.is_dash:
+#                  max_width = max(0.4, max_width, hline_range.style.width)
+            tex += self.get_hline_tex(hline_range) + '\n'
 #          self.table.vspace += max_width
         return tex

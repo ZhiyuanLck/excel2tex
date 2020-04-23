@@ -13,6 +13,7 @@ class Cell:
         self.height = 1
         self.width = 1
         self.color = 'FFFFFF'
+        self.is_colored = False
         self.begin = False
         self.end = False
         self.control_cell = True
@@ -29,8 +30,10 @@ class Cell:
             row, col = self.coor
             self.control_cell = self.table.merged_cells[self.merged_idx-1].is_control(row, col)
         else:
-            color = self.cell.fill.bgColor.rgb
-            if color != '00000000' and color is not None and isinstance(color, str):
+            color = self.cell.fill.fgColor.rgb
+#              print(color)
+            if color is not None and color != '00000000' and isinstance(color, str):
+                self.is_colored = True
                 self.table.colors.add(color)
                 self.color = color[2:]
         self.text_prop.set_prop(self)

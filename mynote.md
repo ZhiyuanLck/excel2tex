@@ -88,19 +88,18 @@
   }\hfill%
 }
 % top: solid, bottom: solid
-% #1 top color, #2 bottom color, #3 common width to expand
-% #4 top height #5 bottom height
+% #1 top color #2 top height #3 bottom color#4 bottom height
 \newcommand{\ssfill}[4]{%
-  \leaderfill{\hsp{#1}{0.01pt}{#3}\hsp{#2}{0.01pt}{#4}}%
+  \leaderfill{\hsp{#1}{0.01pt}{#2}\hsp{#3}{0.01pt}{#4}}%
 }
 % top: solid, bottom: dashed
-% #1 top color, #2 bottom color, #3 common width to expand
-% #4 top height #5 bottom height, #6 bottom dash line style
+% #1 top color, #2 top height, #3 common width to expand
+% #4 bottom color #5 bottom height, #6 bottom dash line style
 \newcommand{\sdfill}[6]{%
-  \leaderfill{\hsp{#1}{#3}{#4}\hdp{#2}{#3}{#5}{#6}}%
+  \leaderfill{\hsp{#1}{#3}{#2}\hdp{#4}{#3}{#5}{#6}}%
 }
 % single solid
-% #1 height #2 color
+% #1 color #2 height
 \newcommand{\sfill}[2]{%
   \leaderfill{\hsp{#1}{0.01pt}{#2}}%
 }
