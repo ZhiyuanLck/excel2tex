@@ -97,7 +97,6 @@ class OutputCell(OutputBase):
     def get_row(self, i):
         row_tex = ''
         vlines = self.vlines[i]
-#          print(self.table.x1, self.table.x2)
         for j in range(self.table.y1 - 1, self.table.y2):
             cell = self.cells[i][j]
             lvline = vlines[j]
@@ -116,8 +115,6 @@ class OutputCell(OutputBase):
         return before + tex
 
     def get_cell(self, cell, lvline, rvline):
-        if cell.ignored:
-            return ''
         left = '' if not cell.begin else self.get_cell_vline(lvline)
         right = self.get_cell_vline(rvline)
         if cell.merged_idx and not cell.control_cell:
@@ -132,12 +129,16 @@ class OutputCell(OutputBase):
 
     def get_col(self, cell):
         res = ''
+        text = cell.text_prop.text
         if cell.color != 'white':
             res += f'\\cellcolor{{{cell.color}}}'
-        if cell.control_cell and not cell.one_row:
-            res += f'\n    \\multirowcell{{-{cell.height}}}[0ex][{cell.align}]{{{cell.text_prop.text}}}'
+        if cell.control_cell:
+            if cell.one_row:
+                res += text
+            else:
+                res += f'\n    \\multirowcell{{-{cell.height}}}[0ex][{cell.align}]{{{text}}}'
         elif not cell.merged_idx:
-            res += cell.text_prop.text
+            res += text
         return res
 
 class Output:

@@ -18,6 +18,7 @@ class TextProp:
             self.color = cell.head.text_prop.color
             self.text = cell.head.text_prop.text
         self.text = self.format_text(cell) if cell.args.excel_format else self.get_cell_tex(cell)
+#          if cell.coor == (2, 2): print(self.text)
 
     def format_text(self, cell):
         text = self.text

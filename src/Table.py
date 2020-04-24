@@ -31,6 +31,7 @@ class Table:
             self.set_line_bounds()
         self.set_props()
         self.set_hlines()
+#          print(self.cells[1][1].control_cell)
         # not used by current version of excel convert
         if self.args.excel_format:
             Setting(self)
