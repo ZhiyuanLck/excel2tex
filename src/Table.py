@@ -3,6 +3,7 @@ from .MergedCell import MergedCell
 from .help import scan_all
 from .line import LineMatrix
 from .output import Output
+from .setting import Setting
 
 class Table:
     def __init__(self, ws, args):
@@ -29,23 +30,26 @@ class Table:
         if self.args.excel_format:
             self.set_line_bounds()
         self.set_props()
-        print(self.hlines.max_width)
-        Output(self)
         self.set_hlines()
-        self.set_texs()
+        # not used by current version of excel convert
+        if self.args.excel_format:
+            Setting(self)
+            self.tex = Output(self).tex
+        else:
+            self.set_texs()
 
     def init_cell_matrix(self):
         for i in range(1, self.x2 + 1):
             for j in range(1, self.y2 + 1):
                 cell = self.cells[i - 1][j - 1]
-#                  print(self.ws.cell(i, j).fill.fgColor.rgb)
-#                  cell.color = self.ws.cell(i, j).fill.fgColor.rgb
                 r, c = cell.get_head(self.merged_cells, i, j)
                 cell.head = self.cells[r - 1][c - 1]
                 cell.merged_idx = cell.get_merged_idx(self.merged_cells, i, j)
                 cell.text_prop.text = self.ws.cell(i, j).value
                 cell.first_row = True if i == self.x1 else False
                 cell.first_col = True if j == self.y1 else False
+                cell.last_col = True if j == self.y2 else False
+                cell.set_color()
                 # set border_prop
                 cell.border.set_prop(cell)
 

@@ -16,7 +16,8 @@ class TextProp:
             self.i = cell.head.text_prop.i
             self.b = cell.head.text_prop.b
             self.color = cell.head.text_prop.color
-        self.format_text(cell)
+            self.text = cell.head.text_prop.text
+        self.text = self.format_text(cell) if cell.args.excel_format else self.get_cell_tex(cell)
 
     def format_text(self, cell):
         text = self.text
@@ -44,6 +45,11 @@ class TextProp:
                 if self.color != '000000':
                     self.table.colors.add(self.color)
                     text = '\\textcolor{' + self.color + '}' + '{' + text + '}'
+        return text
+
+    # not used by excel format
+    def get_cell_tex(self, cell):
+        text = self.format_text(cell)
         begin_line = '|' if cell.begin else ''
         str_dic = {
                 'plain': text,
@@ -65,7 +71,7 @@ class TextProp:
             text += r' \\'
         if text:
             text = '  ' + text.strip() + '\n'
-        self.text = text
+        return text
 
 class BorderLine:
     def __init__(self, table):

@@ -1,9 +1,3 @@
-#  if __name__ == "__main__" and __package__ is None:
-#      from sys import path
-#      from os.path import dirname as dir
-
-#      path.append(dir(path[0]))
-#      __package__ = "excel2tex"
 import argparse
 from openpyxl import load_workbook
 from src.Table import Table
@@ -17,6 +11,8 @@ if __name__ == '__main__':
             )
     parser.add_argument('-s', default='table.xlsx', dest='source', help='source file (default: %(default)s)')
     parser.add_argument('-o', default='table.tex', dest='target', help='target file (default: %(default)s)')
+    parser.add_argument('-p', default='setting.tex', dest='setting', help='setting file (default: %(default)s)')
+    parser.add_argument('-w', default='\\linewidth', dest='width', help='table width (default: %(default)s)')
     parser.add_argument('--sig', default='utf-8', dest='encoding',
             nargs='?',
             const='utf-8-sig',

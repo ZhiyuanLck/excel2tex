@@ -27,3 +27,9 @@ class MergedCell:
 
     def is_control(self, row, col):
         return row == self.x2 and col == self.y1
+
+    def is_ignored(self, row, col):
+        return row == self.x2 and col > self.y1
+
+    def is_one_row(self, row, col):
+        return self.x1 == self.x2
