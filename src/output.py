@@ -120,7 +120,11 @@ class OutputCell(OutputBase):
             return ''
         left = '' if not cell.begin else self.get_cell_vline(lvline)
         right = self.get_cell_vline(rvline)
-        return f'\\multicolumn{{{cell.width}}}{{{left}X{right}}}{{{self.get_col(cell)}}}\n'
+        if cell.merged_idx and not cell.control_cell:
+            align = 'c'
+        else:
+            align = cell.align
+        return f'\\multicolumn{{{cell.width}}}{{{left}{align}{right}}}{{{self.get_col(cell)}}}\n'
 
     def get_cell_vline(self, vline):
         res = self.get_vline(vline)
@@ -152,6 +156,6 @@ class Output:
 
     def wrap_tex(self, tex):
         width = self.table.y2 - self.table.y1 + 1
-        before = f'\\begin{{tabularx}}{{{self.args.width}}}{{*{{{width}}}{{X}}}}\n'
-        end = f'\\end{{tabularx}}'
+        before = f'\\begin{{tabular}}{{*{{{width}}}{{c}}}}\n'
+        end = f'\\end{{tabular}}'
         return before + tex + end
