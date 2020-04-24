@@ -12,8 +12,8 @@ class Cell:
         self.merged_idx = 0
         self.height = 1
         self.width = 1
-        self.color = 'FFFFFF'
-        self.is_colored = False
+        self.color = 'white'
+#          self.is_colored = False
         self.begin = False
         self.end = False
         self.control_cell = True
@@ -25,17 +25,16 @@ class Cell:
     def set_prop(self):
         self.coor = (self.cell.row, self.cell.column)
         self.align = self.cell.alignment.horizontal
-        if self.merged_idx:
+        color = self.cell.fill.fgColor.rgb
+        if color is not None and color != '00000000' and isinstance(color, str):
+            self.color = color[2:]
+            self.table.colors.add(self.color)
+        elif self.merged_idx:
             self.color = self.head.color
             row, col = self.coor
             self.control_cell = self.table.merged_cells[self.merged_idx-1].is_control(row, col)
-        else:
-            color = self.cell.fill.fgColor.rgb
-#              print(color)
-            if color is not None and color != '00000000' and isinstance(color, str):
-                self.is_colored = True
-                self.table.colors.add(color)
-                self.color = color[2:]
+        if self.color == '000000':
+            self.color = 'white'
         self.text_prop.set_prop(self)
 #          self.border.set_prop(self)
 

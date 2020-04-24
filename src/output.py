@@ -17,7 +17,7 @@ class OutputHhline(OutputBase):
 
     def get_hhline(self, i):
         res = '\\hhline{\n'
-        for j in range(self.table.y1 - 1, self.table.y2 + 1):
+        for j in range(self.table.y1 - 1, self.table.y2):
 #          for j, hline in enumerate(self.hlines[i]):
             if j == self.table.y1 - 1:
                 res += self.get_vhline(self.vlines[i - 1][j])
@@ -27,7 +27,7 @@ class OutputHhline(OutputBase):
         return res
 
     def get_vhline(self, vline):
-        if vline.is_none:
+        if vline.is_none or vline.ignored:
             return ''
         return wrap_ge(self.get_vline(vline))
 
@@ -35,9 +35,11 @@ class OutputHhline(OutputBase):
         hline = self.hlines[i][j]
         if hline.first_hline:
             return self.get_base_hline(hline)
-        max_w = self.max_width[j]
+        max_w = self.max_width[i]
         cell = self.cells[i - 1][j]
-        cell_color = cell.color if cell.is_colored else 'white'
+        cell_color = cell.color
+        if hline.ignored:
+            return self.get_ignored_hline(max_w, hline, cell_color)
         return self.get_other_hline(max_w, hline, cell_color)
 
     def get_base_hline(self, hline):
@@ -56,6 +58,7 @@ class OutputHhline(OutputBase):
         if hline.is_none:
             return '  ~\n'
         div = max_w - hline.width
+#          print(hline.width, max_w)
         common_width = hline.get_dash_width()
         res = None
         if div and hline.is_dash:
@@ -66,6 +69,12 @@ class OutputHhline(OutputBase):
             res = self.ssfill(cell_color, div, hline.color, hline.width)
         if not div and not hline.is_dash:
             res = self.sfill(hline.color, hline.width)
+        return wrap_excl(res)
+
+    def get_ignored_hline(self, max_width, hline, cell_color):
+        if cell_color == 'white':
+            return '  ~\n'
+        res = self.sfill(cell_color, max_width)
         return wrap_excl(res)
 
     def dfill(self, color, width, height, style):
@@ -84,5 +93,8 @@ class Output:
     def __init__(self, table):
         hhline = OutputHhline(table)
         for i in range(table.x2 + 1):
-            if i == 4:
+            if i == 2:
                 print(hhline.get_hhline(i))
+#              print(hhline.get_hhline(i))
+#              hhline.get_hhline(i)
+            pass

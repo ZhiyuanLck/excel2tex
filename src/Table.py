@@ -29,6 +29,7 @@ class Table:
         if self.args.excel_format:
             self.set_line_bounds()
         self.set_props()
+        print(self.hlines.max_width)
         Output(self)
         self.set_hlines()
         self.set_texs()
@@ -37,14 +38,14 @@ class Table:
         for i in range(1, self.x2 + 1):
             for j in range(1, self.y2 + 1):
                 cell = self.cells[i - 1][j - 1]
+#                  print(self.ws.cell(i, j).fill.fgColor.rgb)
+#                  cell.color = self.ws.cell(i, j).fill.fgColor.rgb
                 r, c = cell.get_head(self.merged_cells, i, j)
                 cell.head = self.cells[r - 1][c - 1]
                 cell.merged_idx = cell.get_merged_idx(self.merged_cells, i, j)
                 cell.text_prop.text = self.ws.cell(i, j).value
                 cell.first_row = True if i == self.x1 else False
-#                  cell.last_row = True if i == self.x2 else False
                 cell.first_col = True if j == self.y1 else False
-#                  cell.last_col = True if j == self.y2 else False
                 # set border_prop
                 cell.border.set_prop(cell)
 
@@ -75,7 +76,7 @@ class Table:
                 break
         # remove right empty cols
         old = self.y2
-        for j in range(old - 1, self.y1, -1):
+        for j in range(old - 1, self.y1 - 2, -1):
             cell_list = [row[j] for row in self.cells]
             if scan_all(cell_list, 'not_empty'):
                 self.y2 -= 1
@@ -162,26 +163,26 @@ class Table:
         for i in range(self.x1, self.x2 + 1):
             for j in range(self.y1, self.y2 + 1):
                 cell = self.cells[i - 1][j - 1]
-                self.set_cell_type()
+                self.set_cell_type(i, j)
                 cell.set_prop()
 
-    def set_cell_type(self):
+    def set_cell_type(self, i, j):
         '''
         set `begin`, `end`, `height`, `width`, `cell_type`
         '''
-        for i in range(self.x1, self.x2 + 1):
-            for j in range(self.y1, self.y2 + 1):
-                cell = self.cells[i - 1][j - 1]
-                cell.cell_type = "plain"
-                cell.begin = True if j == self.y1 else False
-                # real end or block end
-                cell.end = True if j == self.y2 else False
-                if cell.merged_idx:
-                    merged_cell = self.merged_cells[cell.merged_idx - 1]
-                    cell.cell_type = merged_cell.get_type(i, j)
-                    cell.height = merged_cell.x2 - merged_cell.x1 + 1
-                    cell.width = merged_cell.y2 - merged_cell.y1 + 1
-                    cell.end = merged_cell.is_end(self.y2)
+#          for i in range(self.x1, self.x2 + 1):
+#              for j in range(self.y1, self.y2 + 1):
+        cell = self.cells[i - 1][j - 1]
+        cell.cell_type = "plain"
+        cell.begin = True if j == self.y1 else False
+        # real end or block end
+        cell.end = True if j == self.y2 else False
+        if cell.merged_idx:
+            merged_cell = self.merged_cells[cell.merged_idx - 1]
+            cell.cell_type = merged_cell.get_type(i, j)
+            cell.height = merged_cell.x2 - merged_cell.x1 + 1
+            cell.width = merged_cell.y2 - merged_cell.y1 + 1
+            cell.end = merged_cell.is_end(self.y2)
 
     def set_hlines(self):
         self.hline_ranges = []

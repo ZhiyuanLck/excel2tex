@@ -39,6 +39,7 @@ class Line:
         self.last_hline = False
         # 表格左侧的竖线
         self.first_vline = False
+        # 竖线是否不画
         self.ignored = False
 
     def format_dash(self):
@@ -73,9 +74,15 @@ class Line:
         if j + 1 == table.y1:
             self.first_vline = True
         if type == 'hline' and i > table.x1 - 1 and i < table.x2:
-            self.ignored = table.cells[i - 1][j].merged_idx == table.cells[i][j].merged_idx
+            up = table.cells[i - 1][j].merged_idx
+            down = table.cells[i][j].merged_idx
+            if up == down and up > 0:
+                self.ignored = True
         if type == 'vline' and j > table.y1 - 1 and j < table.y2:
-            self.ignored = table.cells[i][j - 1].merged_idx == table.cells[i][j].merged_idx
+            left = table.cells[i][j - 1].merged_idx
+            right = table.cells[i][j].merged_idx
+            if left == right and left > 0:
+                self.ignored = True
         border = self.get_hline(table, i, j) if type == 'hline' else self.get_vline(table, i, j)
         if border.style is not None:
             self.is_none = False
@@ -147,7 +154,7 @@ class LineMatrix:
         start_idx, end_idx = self.cut_range(hline)
         # one line
         if start_idx == end_idx:
-            return [hlineRange(start_idx, end_idx, hline[0])]
+            return [ClineRange(start_idx, end_idx, hline[0])]
         # none line
         if end_idx == 0:
             return []
@@ -186,6 +193,7 @@ class LineMatrix:
 #              tex = tex + '\n' + tex
         return tex
 
+    # not used
     def set_vspace(self):
         for hline in self.borders:
             hline_ranges = self.get_hline_range(hline)
@@ -195,6 +203,7 @@ class LineMatrix:
                     max_width = max(0.4, max_width, hline_range.style.width)
             self.table.vspace += max_width
 
+    # not used
     def get_row_hline_tex(self, hline):
         tex = ''
         hline_ranges = self.get_hline_range(hline)
