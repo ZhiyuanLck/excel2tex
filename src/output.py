@@ -117,11 +117,22 @@ class OutputCell(OutputBase):
     def get_cell(self, cell, lvline, rvline):
         left = '' if not cell.begin else self.get_cell_vline(lvline)
         right = self.get_cell_vline(rvline)
+        align = self.get_align(cell)
+        return f'\\multicolumn{{{cell.width}}}{{{left}{align}{right}}}{{{self.get_col(cell)}}}\n'
+
+    def get_align(self, cell):
         if cell.merged_idx and not cell.control_cell:
             align = 'c'
         else:
             align = cell.align
-        return f'\\multicolumn{{{cell.width}}}{{{left}{align}{right}}}{{{self.get_col(cell)}}}\n'
+        before = ''
+        if cell.text_prop.i or cell.text_prop.b:
+            if cell.text_prop.i:
+                before += '\\itshape'
+            if cell.text_prop.b:
+                before += '\\bfseries'
+            before = f'>{{{before}}}'
+        return before + align
 
     def get_cell_vline(self, vline):
         res = self.get_vline(vline)
