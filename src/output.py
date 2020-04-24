@@ -136,7 +136,7 @@ class OutputCell(OutputBase):
             if cell.one_row:
                 res += text
             else:
-                res += f'\n    \\multirowcell{{-{cell.height}}}[0ex][{cell.align}]{{{text}}}'
+                res += f'\n    \\multirow{{-{cell.height}}}*{{{text}}}'
         elif not cell.merged_idx:
             res += text
         return res

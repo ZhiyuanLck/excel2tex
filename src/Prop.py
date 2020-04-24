@@ -46,6 +46,8 @@ class TextProp:
                 if self.color != '000000':
                     self.table.colors.add(self.color)
                     text = '\\textcolor{' + self.color + '}' + '{' + text + '}'
+                if text.find('\\\\') != -1:
+                    text = f'\\minitab[{cell.align}]{{{text}}}'
         return text
 
     # not used by excel format

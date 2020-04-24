@@ -25,7 +25,9 @@ class Setting:
 \usepackage{colortbl}
 \usepackage{dashrule}
 \usepackage{ehhline}
-\usepackage{arydshln}
+
+%% nested tabular
+\newcommand{\minitab}[2][l]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
 
 %% vertical line
 % vertical colored line #1 color #2 width
