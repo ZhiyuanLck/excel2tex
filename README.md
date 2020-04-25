@@ -123,4 +123,4 @@ Does this tool help you? You can buy me coffee!
 <!-- ![wechat](../img/wechat.png) ![alipay](../img/alipay.jpg) -->
 | wechat                                                                                     | alipay                                                                                     |
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| <img src="https://github.com/ZhiyuanLck/excel2tex/blob/master/img/wechat.png" width="300"> | <img src="https://github.com/ZhiyuanLck/excel3tex/blob/master/img/alipay.jpg" width="300"> |
+| <img src="https://github.com/ZhiyuanLck/excel2tex/blob/master/img/wechat.png" width="300"> | <img src="https://github.com/ZhiyuanLck/excel2tex/blob/master/img/alipay.jpg" width="300"> |

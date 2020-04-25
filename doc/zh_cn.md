@@ -122,4 +122,4 @@ python excel2tex.py -s table.xlsx -o table.tex --sig
 <!-- ![wechat](../img/wechat.png) ![alipay](../img/alipay.jpg) -->
 | 微信                                                                                     | 支付宝                                                                                     |
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| <img src="https://github.com/ZhiyuanLck/excel2tex/blob/master/img/wechat.png" width="300"> | <img src="https://github.com/ZhiyuanLck/excel3tex/blob/master/img/alipay.jpg" width="300"> |
+| <img src="https://github.com/ZhiyuanLck/excel2tex/blob/master/img/wechat.png" width="300"> | <img src="https://github.com/ZhiyuanLck/excel2tex/blob/master/img/alipay.jpg" width="300"> |
