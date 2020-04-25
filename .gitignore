@@ -1,6 +1,4 @@
-a.tex
-setting.tex
-table.tex
+/*.tex
 *.xlsx
 *.xls
 *.ipynb
@@ -8,3 +6,4 @@ table.tex
 __pycache__
 build
 dist
+output
