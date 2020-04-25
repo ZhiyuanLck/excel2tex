@@ -7,6 +7,7 @@ class OutputBase:
         self.hlines = table.hlines.borders
         self.vlines = table.vlines.borders
         self.max_width = table.hlines.max_width
+        self.vline_max_width = table.vlines.vline_max_width
 
     def get_vline(self, vline):
         if vline.is_none or vline.ignored:
@@ -17,36 +18,113 @@ class OutputHhline(OutputBase):
     def __init__(self, table):
         super().__init__(table)
 
+    def get_tbvline(self, i, j):
+        '''
+        get top right and bottom right vlines of hlines[i][j]
+        '''
+        tvline = None
+        bvline = None
+        if i > self.table.x1 - 1:
+            tvline = self.vlines[i - 1][j + 1]
+        if i < self.table.x2:
+            bvline = self.vlines[i][j + 1]
+        return tvline, bvline
+
     def get_hhline(self, i):
         res = '\\hhline{\n'
-        ignore_vhline = i == self.table.x1 - 1 or i == self.table.x2
         for j in range(self.table.y1 - 1, self.table.y2):
-            if not ignore_vhline and j == self.table.y1 - 1:
-                res += self.get_vhline(self.vlines[i - 1][j])
+            rhline = self.hlines[i][j]
+            lhline = rhline.get_lhline()
+            # first vhline
+            if j == self.table.y1 - 1:
+                tvline, bvline = self.get_tbvline(i, j - 1)
+                res += self.get_vhline(lhline, rhline, tvline, bvline)
             res += self.get_hline(i, j)
-            if not ignore_vhline:
-                res += self.get_vhline(self.vlines[i - 1][j + 1])
+            tvline, bvline = self.get_tbvline(i, j)
+            res += self.get_vhline(lhline, rhline, tvline, bvline)
         res += '}\n'
         return res
 
-    def get_vhline(self, vline):
-        res = self.get_vline(vline)
+    def has_style(self, vline):
+        if vline is None:
+            return False
+        return not vline.is_none
+
+    # used when 't' and 'b' has only one 'true'
+#      def get_single_vline(self, vline, vline_cal_width):
+#          lcell = vline.get_cell('l')
+#          rcell = vline.get_cell('r')
+#          lcolor = 'white'
+#          rcolor = 'white'
+#          if lcell is not None:
+#              lcolor = lcell.color
+#          if rcell is not None:
+#              rcolor = rcell.color
+#          l = lcolor == 'white'
+#          r = rcolor == 'white'
+#          if l and r:
+#              return ''
+#          return f'\\vsl{{{rcolor}}}{{{vline.width}pt}}'
+
+    def get_vhline(self, lhline, rhline, tvline, bvline):
+        l, r, t, b = (self.has_style(vline) for vline in (lhline, rhline, tvline, bvline))
+        if not t and not b:
+            return ''
+        elif t and not b:
+            res = self.get_vline(tvline)
+        elif not t and b:
+            res = self.get_vline(bvline)
+        else:
+            lcolor = 'white'
+            rcolor = 'white'
+            if l:
+                lcolor = lhline.color
+            if r:
+                rcolor = rhline.color
+            bcolor = bvline.color
+            if bcolor == lcolor or bcolor == rcolor:
+                res = self.get_vline(bvline)
+            else:
+                res = self.get_vline(tvline)
         return wrap_ge(res) if res else res
 
     def get_hline(self, i, j):
         hline = self.hlines[i][j]
-        if hline.first_hline:
-            return self.get_base_hline(hline)
         max_w = self.max_width[i]
+        if hline.first_hline:
+            return self.get_base_hline(max_w, hline)
         cell = self.cells[i - 1][j]
         cell_color = cell.color
         if hline.ignored:
             return self.get_ignored_hline(max_w, hline, cell_color)
         return self.get_other_hline(max_w, hline, cell_color)
 
-    def get_base_hline(self, hline):
-        if hline.is_none:
+    # 没有样式的横线，对半填充
+    def get_none_hline(self, max_w, hline):
+        if not max_w:
             return '  ~\n'
+        width = max_w / 2
+        tcell = hline.get_cell('t')
+        bcell = hline.get_cell('b')
+        tcolor = None
+        bcolor = None
+        if tcell is not None and tcell.color != 'white':
+            tcolor = tcell.color
+        if bcell is not None and bcell.color != 'white':
+            bcolor = bcell.color
+        if tcolor is None and bcolor is None:
+            return '  ~\n'
+        if tcolor is None and bcolor is not None:
+            res = self.sfill(bcolor, width)
+        if bcolor is None:
+            bcolor = 'white'
+        res = self.ssfill(tcolor, width, bcolor, width)
+        return wrap_excl(res)
+
+    def get_base_hline(self, max_w, hline):
+        if hline.is_none:
+#              return '  ~\n'
+            return self.get_none_hline(max_w, hline)
         color = hline.color if hline.is_colored else 'black'
         if hline.is_dash:
             res = self.dfill(color, hline.get_dash_width(), hline.width, hline.format_dash())
@@ -56,9 +134,10 @@ class OutputHhline(OutputBase):
 
     def get_other_hline(self, max_w, hline, cell_color):
         if cell_color == 'white':
-            return self.get_base_hline(hline)
+            return self.get_base_hline(max_w, hline)
         if hline.is_none:
-            return '  ~\n'
+#              return '  ~\n'
+            return self.get_none_hline(max_w, hline)
         div = max_w - hline.width
         common_width = hline.get_dash_width()
         res = None
@@ -100,7 +179,7 @@ class OutputCell(OutputBase):
         for j in range(self.table.y1 - 1, self.table.y2):
             cell = self.cells[i][j]
             lvline = vlines[j]
-            rvline = vlines[j + 1]
+            rvline = cell.get_rvline()
             if not cell.ignored:
                 row_tex += self.wrap_cell(cell, self.get_cell(cell, lvline, rvline))
         row_tex += '\\\\\n'
@@ -108,7 +187,7 @@ class OutputCell(OutputBase):
 
     def wrap_cell(self, cell, tex):
         before = '  '
-        if not cell.first_col:
+        if not cell.begin:
             before += '&'
             if tex:
                 before += ' '
@@ -126,17 +205,40 @@ class OutputCell(OutputBase):
         else:
             align = cell.align
         before = ''
-        if cell.text_prop.i or cell.text_prop.b:
-            if cell.text_prop.i:
-                before += '\\itshape'
-            if cell.text_prop.b:
-                before += '\\bfseries'
+        prop = cell.text_prop
+        if prop.color != '000000':
+            before += f'\\color{{{prop.color}}}'
+        if prop.i:
+            before += '\\itshape'
+        if prop.b:
+            before += '\\bfseries'
+        if before:
             before = f'>{{{before}}}'
         return before + align
 
     def get_cell_vline(self, vline):
         res = self.get_vline(vline)
         return f'!{{{res}}}' if res else res
+#          if vline.is_none:
+#              lcell = vline.get_cell('l')
+#              rcell = vline.get_cell('r')
+#              lcolor = 'white'
+#              rcolor = 'white'
+#              if lcell is not None:
+#                  lcolor = lcell.color
+#              if rcell is not None:
+#                  rcolor = rcell.color
+#              l = lcolor == 'white'
+#              r = rcolor == 'white'
+#              if l and r:
+#                  return ''
+#              x, y = vline.idx
+#              width = self.vline_max_width[y] / 2
+#              res = f'\\vsl{{{lcolor}}}{{{width}pt}}'
+#              res += f'\\vsl{{{rcolor}}}{{{width}pt}}'
+#          else:
+#              res = self.get_vline(vline)
+#          return f'!{{{res}}}' if res else res
 
     def get_col(self, cell):
         res = ''

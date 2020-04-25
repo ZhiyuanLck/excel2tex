@@ -10,7 +10,6 @@ class TextProp:
         self.i = cell.cell.font.i
         self.b = cell.cell.font.b
         color = cell.cell.font.color.rgb
-        self.text = self.format_text(cell) if cell.args.excel_format else self.get_cell_tex(cell)
         if color is not None and isinstance(color, str):
             self.color = color[2:]
         if cell.merged_idx:
@@ -18,7 +17,9 @@ class TextProp:
             self.b = cell.head.text_prop.b
             self.color = cell.head.text_prop.color
             self.text = cell.head.text_prop.text
-#          if cell.coor == (2, 2): print(self.text)
+        if self.color != '000000':
+            self.table.colors.add(self.color)
+        self.text = self.format_text(cell) if cell.args.excel_format else self.get_cell_tex(cell)
 
     def format_text(self, cell):
         text = self.text
@@ -39,13 +40,6 @@ class TextProp:
         # excel format
         if text:
             if cell.args.excel_format:
-#                  if self.i:
-#                      text = '\\textit{' + text + '}'
-#                  if self.b:
-#                      text = '\\textbf{' + text + '}'
-                if self.color != '000000':
-                    self.table.colors.add(self.color)
-                    text = '\\textcolor{' + self.color + '}' + '{' + text + '}'
                 if text.find('\\\\') != -1:
                     text = f'\\minitab[{cell.align}]{{{text}}}'
         return text

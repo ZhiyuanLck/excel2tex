@@ -24,7 +24,9 @@ class Line:
             'mediumDashDotDot': (True,     1,    0.4,      [1, 1]),
             'slantDashDot':     (True,     1,    0.4,      [1, 1]),
             }
-    def __init__(self):
+    def __init__(self, table, idx):
+        self.table = table
+        self.idx = idx
         self.style = None
         self.is_none = True
         self.is_dash = False
@@ -32,7 +34,9 @@ class Line:
         self.width = 0
         self.dash_style = []
         self.is_colored = False
-        self.color = None
+        # hline or vline
+        self.type = None
+        self.color = 'white'
         # 第一行的顶端的横线
         self.first_hline = False
         # 表格末尾的横线
@@ -41,6 +45,38 @@ class Line:
         self.first_vline = False
         # 竖线是否不画
         self.ignored = False
+
+    def get_lhline(self):
+        table = self.table
+        cells = table.cells
+        lhline = None
+        l_x, l_y = self.idx
+        if l_y > table.y1 - 1:
+            lhline = table.hlines.borders[l_x][l_y - 1]
+        return lhline
+
+    def valid_bound(self, x, y):
+        table = self.table
+        x_min = table.x1 - 1
+        x_max = table.x2 - 1
+        y_min = table.y1 - 1
+        y_max = table.y2 - 1
+        return x_min < x < x_max and y_min < y < y_max
+
+    def get_cell(self, mode):
+        table = self.table
+        cells = table.cells
+        l_x, l_y = self.idx
+        cell_dic = {
+                't': (l_x - 1, l_y),
+                'b': (l_x, l_y),
+                'l': (l_x, l_y - 1),
+                'r': (l_x, l_y),
+                }
+        c_x, c_y = cell_dic[mode]
+        if not self.valid_bound(c_x, c_y):
+            return None
+        return cells[c_x][c_y]
 
     def format_dash(self):
         return 'pt '.join([str(x) for x in self.dash_style]) + 'pt'
@@ -67,6 +103,7 @@ class Line:
         return up if up.style is not None else down
 
     def set_line(self, table, i, j, type):
+        self.type = type
         if i + 1 == table.x1:
             self.first_hline = True
         if i == table.x2:
@@ -109,8 +146,11 @@ class LineMatrix:
         self.table = table
         self.x_max = table.x2 - 1
         self.y_max = table.y2 - 1
+        # for hlines
         self.max_width = []
-        self.borders = [[Line()
+        # for vlines
+        self.vline_max_width = []
+        self.borders = [[Line(table, (i, j))
             for j in range(self.y_max)]
             for i in range(self.x_max)]
 
@@ -123,6 +163,12 @@ class LineMatrix:
                 border.set_line(self.table, i, j, type)
                 max_w = max(border.width, max_w)
             self.max_width.append(max_w)
+        for j in range(self.y_max):
+            max_w = 0
+            for i in range(self.x_max):
+                border = self.borders[i][j]
+                max_w = max(border.width, max_w)
+            self.vline_max_width.append(max_w)
 
     def is_empty(self, line):
         for border in line:
@@ -162,7 +208,7 @@ class LineMatrix:
         start = start_idx
         end = end_idx
         res = []
-        pre = Line()
+        pre = Line(self.table, (-1, -1))
         for border in hline[start_idx:end_idx + 1]:
             if not border.is_eql(pre):
                 # previous group end

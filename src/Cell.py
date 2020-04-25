@@ -20,9 +20,8 @@ class Cell:
         self.one_row = False
         # block中与控制单元格在同一行的其他单元格忽略
         self.ignored = False
-        self.first_row = False
-        self.first_col = False
-        self.last_col = False
+        self.block_begin = False
+        self.block_end = False
         self.text_prop = TextProp(self.table)
         self.border = Border(self.table)
 
@@ -40,9 +39,12 @@ class Cell:
         if self.merged_idx:
             self.align = self.head.align
             row, col = self.coor
-            self.control_cell = self.table.merged_cells[self.merged_idx-1].is_control(row, col)
-            self.ignored = self.table.merged_cells[self.merged_idx-1].is_ignored(row, col)
-            self.one_row = self.table.merged_cells[self.merged_idx-1].is_one_row(row, col)
+            merged_cell = self.table.merged_cells[self.merged_idx-1]
+            self.control_cell = merged_cell.is_control(row, col)
+            self.ignored = merged_cell.is_ignored(row, col)
+            self.one_row = merged_cell.is_one_row(row, col)
+            self.block_begin = col == merged_cell.y1
+            self.block_end = col == merged_cell.y2
         self.text_prop.set_prop(self)
 
     def set_color(self):
@@ -54,6 +56,12 @@ class Cell:
             self.color = self.head.color
         if self.color == '000000':
             self.color = 'white'
+
+    def get_rvline(self):
+        x, y = self.coor
+        if self.merged_idx:
+            y = self.table.merged_cells[self.merged_idx - 1].y2
+        return self.table.vlines.borders[x - 1][y]
 
     def get_merged_idx(self, merged_cells, row, col):
         for m in merged_cells:

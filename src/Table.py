@@ -31,8 +31,6 @@ class Table:
             self.set_line_bounds()
         self.set_props()
         self.set_hlines()
-#          print(self.cells[1][1].control_cell)
-        # not used by current version of excel convert
         if self.args.excel_format:
             Setting(self)
             self.tex = Output(self).tex
@@ -47,11 +45,7 @@ class Table:
                 cell.head = self.cells[r - 1][c - 1]
                 cell.merged_idx = cell.get_merged_idx(self.merged_cells, i, j)
                 cell.text_prop.text = self.ws.cell(i, j).value
-                cell.first_row = True if i == self.x1 else False
-                cell.first_col = True if j == self.y1 else False
-                cell.last_col = True if j == self.y2 else False
                 cell.set_color()
-                # set border_prop
                 cell.border.set_prop(cell)
 
     def set_bounds(self):
@@ -218,16 +212,11 @@ class Table:
     def set_texs(self):
         self.row_texs = []
         self.tex = '% Please add the following required packages to your document preamble:\n'
-        if self.colors:
-            self.tex += '% \\usepackage{xcolor}'
         self.tex += '% \\usepackage{multirow, makecell}\n'
         if self.args.excel_format:
             self.tex += '% \\usepackage{booktabs}'
             self.tex += '% \\usepackage{colortbl}'
             self.tex += '% \\usepackage{arydshln}'
-        self.tex += '\n% color definition\n' if self.colors else ''
-        for color in self.colors:
-            self.tex += '\\definecolor{' + color + '}{HTML}{' + color + '}\n'
         if self.args.excel_format:
             self.tex += '''
 {

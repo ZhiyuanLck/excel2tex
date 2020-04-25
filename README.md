@@ -1,17 +1,42 @@
 # Convert excel table to latex table
 
-This tool convert excel table to latex table in human-readable format.
+A powerful tool that converts excel table to latex table in human-readable format.
+
+Documentation for simplified Chinese: [简体中文](../blob/master/doc/zh_cn.md)
+
+## Supported excel's styles
+
+- horizontal line
+  - none
+  - solid
+  - dash (coming soon)
+  - double line (coming soon)
+- vertical line
+  - none
+  - solid
+  - double line (coming soon)
+- colored line
+- colored cell
+- colored text
+- horizontal alignment
+- text shape
+  - italic
+  - bold
+
+## Before conversion
+
+- Don't use **`theme colors`** that excel show in the panel, otherwise your color will not be recognized. `standard colors` or `more colors` will be ok.
+- Font style is specified for the whole text, not a single character, i.e., if you have two characters one of which is bold and another is italic, then they will be both bold and italic.
+- The height of every merged cell must not be less than the number of lines in your text.
 
 ## Requirements
 
-Please add the following required packages to your document preamble:
-
+If you are not using a `-e` option, please add the following required packages to your preamble:
 ```tex
 \usepackage{multirow, makecell}
 ```
 
-Following python packages are needed:
-
+Following python package is required:
 ```shell
 pip install openpyxl
 ```
@@ -19,138 +44,47 @@ pip install openpyxl
 ## Usage
 
 ```text
-usage: excel2tex.py [-h] -s SOURCE -o TARGET
+usage: excel2tex.py [-h] [-s SOURCE] [-o TARGET] [--setting SETTING] [--sig] [-m] [-e]
 
 optional arguments:
-  -h, --help  show this help message and exit
-  -s SOURCE   source file (default: table.xlsx)
-  -o TARGET   target file (default: table.tex)
-  --sig [ENCODING]  set file encoding to utf-8-sig, only use when there is mess code.
-  -m [MATH], --math [MATH] enable inline math
+  -h, --help            show this help message and exit
+  -s SOURCE             source file (default: table.xlsx)
+  -o TARGET             target file (default: table.tex)
+  --setting SETTING     setting file (default: setting.tex)
+  --sig                 set file encoding to utf-8-sig, only use when there is mess code.
+  -m, --math            enabel inline math
+  -e, --excel-format    enabel all formats
 ```
 
-If you are using windows and have no python installed, an executable file is provided [here](https://github.com/ZhiyuanLck/excel2tex/releases/tag/0.1)
+If you are using windows and have no python installed, an executable file is provided [here (outdated)](https://github.com/ZhiyuanLck/excel2tex/releases/tag/0.1)
 
-## Note
+### Simple usage
 
-You should obey some rules of how to create a table that can be successfully converted:
-
-- The height of every merged cell must be not less than the number of lines in your text.
-
-## Example
-
-### First
-
-Here is a excel table
+We have the following excel table to be converted to latex table.
 
 ![Excel table](img/excel_table.png)
 
-`main.tex`
+`python excel2tex.py` is the simplest method to do this, which means converting an excel file of name `table.xlsx` to a tex file of name `table.tex`. And because you are not using the `-e` option, the table is resolved in the simplest way:
+- All lines are drawn
+- No element will be colored
+- Text are all centered
+- All characters are converted to what they have been.
 
-```tex
-\documentclass{article}
-\usepackage{xeCJK}
-\usepackage{multirow, makecell}
+So this is the converted table drawn in latex. Generated code is in [`simple.tex`](../blob/master/examples/simple.tex)
 
-\begin{document}
-\input{table.tex}
-\end{document}
+![latex table of simple format](img/simple.png)
+
+### Enable all formats
+
+If you want more styles to be resolved, try to use the `-e` option. The following command will convert the table with most of the styles you have set in excel. And a setting file of name `setting.tex` by default (change it by `--setting mysetting.tex`). Please input the setting file in your preamble. The `-m` option ensure that the character `$` is not escaped so that you can enter the math mode in excel just as in latex.
+
+```shell
+python excel2tex.py -e -m
 ```
 
-Generated `table.tex` by `python excel2tex.py -s table.xlsx -o table.tex`
+Here is the result. The generated code is in [`all.tex`](../blob/master/examples/all.tex)
 
-```tex
-% Please add the following required packages to your document preamble:
-% \usepackage{multirow, makecell}
-\begin{tabular}{*{5}{|c}|}
-\hline
-% row 1
-  plain单元格
-  & \multicolumn{2}{c|}{multicolumn测试}
-  & \multicolumn{2}{c|}{block测试} \\
-\hline
-% row 2
-  \multicolumn{2}{|c|}{不是}
-  & \multirowcell{2}{multirow \\测试}
-  & 6
-  & 7 \\
-\cline{1-2}
-\cline{4-5}
-% row 3
-  1
-  & 2
-  &  & 8
-  & 9 \\
-\hline
-% row 4
-  3
-  & 4
-  & 5
-  & \multirowcell{2}{A}
-  & \multirowcell{2}{B} \\
-\cline{1-3}
-% row 5
-  \multicolumn{3}{|c|}{总结}
-  &  &  \\
-\hline
-\end{tabular}
-```
-
-Compile result: `main.pdf`
-
-![LaTeX table](img/latex_table.png)
-
-### Second
-
-Excel table
-
-![Excel table](img/excel_table2.png)
-
-Generated code in `table.tex` by `python excel2tex -s table.xlsx --math`
-
-```tex
-% Please add the following required packages to your document preamble:
-% \usepackage{multirow, makecell}
-\begin{tabular}{*{7}{|c}|}
-\hline
-% row 1
-  \multirowcell{6}{10}
-  & \multicolumn{6}{c|}{11} \\
-\cline{2-7}
-% row 2
-  & \multirowcell{4}{6}
-  & \multicolumn{4}{c|}{7}
-  & \multirowcell{6}{12} \\
-\cline{3-6}
-% row 3
-  &  & \multirowcell{2}{2}
-  & \multicolumn{2}{c|}{3}
-  & \multirowcell{4}{8}
-  &  \\
-\cline{4-5}
-% row 4
-  &  &  & $x + y = z$
-  & \multirowcell{2}{4}
-  &  &  \\
-\cline{3-4}
-% row 5
-  &  & \multicolumn{2}{c|}{5}
-  &  &  &  \\
-\cline{2-5}
-% row 6
-  & \multicolumn{4}{c|}{9}
-  &  &  \\
-\cline{1-6}
-% row 7
-  \multicolumn{6}{|c|}{13}
-  &  \\
-\hline
-\end{tabular}
-```
-
-Generated table
-
-![LaTeX table](img/latex_table2.png)
+![latex table of all format](img/all.png)
 
 ## Trouble shooting
 
@@ -161,7 +95,3 @@ Try to set encoding to `utf-8-sig`, for example
 ```shell
 python excel2tex.py -s table.xlsx -o table.tex --sig
 ```
-
-### Missing vertical line or redundant empty row
-
-Please check the space of every merged cell whether they satisfy the conditions in **Note**.

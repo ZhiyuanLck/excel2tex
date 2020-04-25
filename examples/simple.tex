@@ -1,0 +1,45 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow, makecell}
+
+\begin{tabular}{*{7}{|c}|}
+\hline
+
+% row 1
+  \multirowcell{6}{left \\bold \\red}
+  & \multicolumn{6}{c|}{right aligned text} \\
+\cline{2-7}
+
+% row 2
+  & \multirowcell{4}{mid \\normal}
+  & \multicolumn{4}{c|}{center}
+  & \multirowcell{6}{right \\italic \\green} \\
+\cline{3-6}
+
+% row 3
+  &  & \multirowcell{2}{}
+  & \multicolumn{2}{c|}{}
+  & \multirowcell{4}{bold \\italic}
+  &  \\
+\cline{4-5}
+
+% row 4
+  &  &  & \$x+y=1\$
+  & \multirowcell{2}{}
+  &  &  \\
+\cline{3-4}
+
+% row 5
+  &  & \multicolumn{2}{c|}{}
+  &  &  &  \\
+\cline{2-5}
+
+% row 6
+  & \multicolumn{4}{c|}{center}
+  &  &  \\
+\cline{1-6}
+
+% row 7
+  \multicolumn{6}{|c|}{left aligned text}
+  &  \\
+\hline
+\end{tabular}

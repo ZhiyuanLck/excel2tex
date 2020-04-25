@@ -1,25 +1,4 @@
-class Setting:
-    def __init__(self, table):
-        self.args = table.args
-        self.output_setting(table.colors)
-
-    def output_setting(self, colors):
-        out = self.get_setting() + self.get_color(colors)
-#          with open(self.args.setting, 'w', encoding=self.args.encoding) as f:
-        with open('abc.tex', 'w', encoding=self.args.encoding) as f:
-            f.write(out)
-
-    def get_color(self, colors):
-        res = ''
-        for color in colors:
-            res += self.set_color(color)
-        return res
-
-    def set_color(self, color):
-        return f'\\definecolor{{{color}}}{{HTML}}{{{color}}}\n'
-
-    def get_setting(self):
-        return r'''\usepackage[table]{xcolor}
+\usepackage[table]{xcolor}
 \usepackage{tabularx}
 \usepackage{multirow, makecell}
 \usepackage{colortbl}
@@ -82,4 +61,10 @@ class Setting:
 \newcommand{\aftervline}{%
   \global\setlength\arrayrulewidth{0.4pt}\arrayrulecolor{black}%
 }
-'''
+\definecolor{FF0000}{HTML}{FF0000}
+\definecolor{30E8E6}{HTML}{30E8E6}
+\definecolor{057165}{HTML}{057165}
+\definecolor{9DF4E0}{HTML}{9DF4E0}
+\definecolor{AF2BC7}{HTML}{AF2BC7}
+\definecolor{EED270}{HTML}{EED270}
+\definecolor{05FC00}{HTML}{05FC00}

@@ -1,4 +1,6 @@
-*.tex
+a.tex
+setting.tex
+table.tex
 *.xlsx
 *.xls
 *.ipynb

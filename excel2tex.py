@@ -17,8 +17,10 @@ if __name__ == '__main__':
             nargs='?',
             const='utf-8-sig',
             help='set file encoding to utf-8-sig, only use when there is mess code.')
-    parser.add_argument('-m', '--math', type=bool, default=False, dest='math', help='enabel inline math', const=True, nargs='?')
-    parser.add_argument('-e', '--excel-format', type=bool, default=False, dest='excel_format', help='enabel inline math', const=True, nargs='?')
+    parser.add_argument('-m', '--math', type=bool, default=False, dest='math',
+            help='enable inline math', const=True, nargs='?')
+    parser.add_argument('-e', '--excel-format', type=bool, default=False,
+            dest='excel_format', help='enable all formats', const=True, nargs='?')
     args = parser.parse_args()
     wb = load_workbook(args.source)
     ws = wb.active
