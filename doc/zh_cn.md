@@ -2,6 +2,21 @@
 
 将excel中的表格转换为latex中的表格，支持识别多种格式。
 
+<!--ts-->
+   * [excel表格转换工具](#excel表格转换工具)
+      * [支持识别的excel样式](#支持识别的excel样式)
+      * [准备表格时的注意事项](#准备表格时的注意事项)
+      * [依赖的python包和tex包](#依赖的python包和tex包)
+      * [使用](#使用)
+         * [简单用法](#简单用法)
+         * [识别更多格式](#识别更多格式)
+      * [可能出现的问题](#可能出现的问题)
+         * [乱码](#乱码)
+
+<!-- Added by: zhiyuan, at: Sat 25 Apr 2020 05:27:08 PM UTC -->
+
+<!--te-->
+
 ## 支持识别的excel样式
 
 - 横线
@@ -69,7 +84,7 @@ usage: excel2tex.py [-h] [-s SOURCE] [-o TARGET] [--setting SETTING] [--sig [ENC
 - 所有文本居中对齐
 - 所有字符以本来的样子在latex生成的表格中显示
 
-下面是转换生成的latex表格，生成的代码见[`simple.tex`](../blob/master/simple.tex)
+下面是转换生成的latex表格，生成的代码见[`simple.tex`](../master/simple.tex)
 
 ![latex table of simple format](img/simple.png)
 
@@ -81,7 +96,7 @@ usage: excel2tex.py [-h] [-s SOURCE] [-o TARGET] [--setting SETTING] [--sig [ENC
 python excel2tex.py -e -m
 ```
 
-下面是转换生成的latex表格，生成的代码见[`all.tex`](../blob/master/all.tex)
+下面是转换生成的latex表格，生成的代码见[`all.tex`](../master/all.tex)
 
 ![latex table of all format](img/all.png)
 

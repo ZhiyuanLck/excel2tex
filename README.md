@@ -2,7 +2,22 @@
 
 A powerful tool that converts excel table to latex table in human-readable format.
 
-Documentation for simplified Chinese: [简体中文](../blob/master/doc/zh_cn.md)
+Documentation for simplified Chinese: [简体中文](../master/doc/zh_cn.md)
+
+<!--ts-->
+   * [Convert excel table to latex table](#convert-excel-table-to-latex-table)
+      * [Supported excel's styles](#supported-excels-styles)
+      * [Before conversion](#before-conversion)
+      * [Requirements](#requirements)
+      * [Usage](#usage)
+         * [Simple usage](#simple-usage)
+         * [Enable all formats](#enable-all-formats)
+      * [Trouble shooting](#trouble-shooting)
+         * [Mess code](#mess-code)
+
+<!-- Added by: zhiyuan, at: Sat 25 Apr 2020 05:28:56 PM UTC -->
+
+<!--te-->
 
 ## Supported excel's styles
 
@@ -70,7 +85,7 @@ We have the following excel table to be converted to latex table.
 - Text are all centered
 - All characters are converted to what they have been.
 
-So this is the converted table drawn in latex. Generated code is in [`simple.tex`](../blob/master/examples/simple.tex)
+So this is the converted table drawn in latex. Generated code is in [`simple.tex`](../master/examples/simple.tex)
 
 ![latex table of simple format](img/simple.png)
 
@@ -82,7 +97,7 @@ If you want more styles to be resolved, try to use the `-e` option. The followin
 python excel2tex.py -e -m
 ```
 
-Here is the result. The generated code is in [`all.tex`](../blob/master/examples/all.tex)
+Here is the result. The generated code is in [`all.tex`](../master/examples/all.tex)
 
 ![latex table of all format](img/all.png)
 
