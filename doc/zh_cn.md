@@ -57,8 +57,7 @@ pip install openpyxl
 ## 使用
 
 ```text
-usage: excel2tex.py [-h] [-s SOURCE] [-o TARGET] [--setting SETTING] [--sig [ENCODING]] [-m [MATH]]
-                    [-e [EXCEL_FORMAT]]
+usage: excel2tex.py [-h] [-s SOURCE] [-o TARGET] [--setting SETTING] [--sig] [-m] [-e]
 
 可选参数
   -h, --help            显示命令帮助并退出
