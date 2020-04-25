@@ -19,8 +19,7 @@ class Setting:
 
     def get_setting(self):
         return r'''\usepackage[table]{xcolor}
-\usepackage{tabularx}
-\usepackage{multirow, makecell}
+\usepackage{multirow}
 \usepackage{colortbl}
 \usepackage{dashrule}
 \usepackage{ehhline}
