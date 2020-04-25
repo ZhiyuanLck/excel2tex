@@ -76,7 +76,7 @@ usage: excel2tex.py [-h] [-s SOURCE] [-o TARGET] [--setting SETTING] [--sig [ENC
 
 下面是将要被转换的excel表格
 
-![Excel table](img/excel_table.png)
+![Excel table](../img/excel_table.png)
 
 使用命令`python excel2tex.py`，你将得到一个只有必要格式的表格。这条命令的含义是将`table.xlsx`转换为`table.tex`。因为`-e`选项并没有被使用，生成的表格是最简的：
 - 绘制所有的线条
@@ -86,7 +86,7 @@ usage: excel2tex.py [-h] [-s SOURCE] [-o TARGET] [--setting SETTING] [--sig [ENC
 
 下面是转换生成的latex表格，生成的代码见[`simple.tex`](../master/simple.tex)
 
-![latex table of simple format](img/simple.png)
+![latex table of simple format](../img/simple.png)
 
 ### 识别更多格式
 
@@ -98,7 +98,7 @@ python excel2tex.py -e -m
 
 下面是转换生成的latex表格，生成的代码见[`all.tex`](../master/all.tex)
 
-![latex table of all format](img/all.png)
+![latex table of all format](../img/all.png)
 
 ## 可能出现的问题
 
