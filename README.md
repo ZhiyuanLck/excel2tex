@@ -14,8 +14,10 @@ Documentation for simplified Chinese: [简体中文](../master/doc/zh_cn.md)
          * [Enable all formats](#enable-all-formats)
       * [Trouble shooting](#trouble-shooting)
          * [Mess code](#mess-code)
+      * [Support](#support)
+      * [Buy me a coffee](#buy-me-a-coffee)
 
-<!-- Added by: zhiyuan, at: Sat 25 Apr 2020 05:28:56 PM UTC -->
+<!-- Added by: zhiyuan, at: Sat 25 Apr 2020 08:05:09 PM UTC -->
 
 <!--te-->
 
@@ -110,3 +112,12 @@ Try to set encoding to `utf-8-sig`, for example
 ```shell
 python excel2tex.py -s table.xlsx -o table.tex --sig
 ```
+
+## Support
+If you have some emergency trouble with this tool, send me your code to my email: lichangkai225@qq.com
+
+## Buy me a coffee
+
+Does this tool help you? You can buy me coffee!
+
+![wechat](img/wechat.jpg) ![alipay](img/alipay.jpg)
