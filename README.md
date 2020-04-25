@@ -121,5 +121,5 @@ If you have some emergency trouble with this tool, send me your code to my email
 Does this tool help you? You can buy me coffee!
 
 <!-- ![wechat](../img/wechat.png) ![alipay](../img/alipay.jpg) -->
-<img src="../img/wechat.png" width="100">
-<img src="../img/alipay.jpg" width="100">
+<img src="https://github.com/ZhiyuanLck/excel2tex/blob/master/img/wechat.png" width="100">
+<img src="https://github.com/ZhiyuanLck/excel2tex/blob/master/img/alipay.jpg" width="100">

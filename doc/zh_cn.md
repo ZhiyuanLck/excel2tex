@@ -120,5 +120,5 @@ python excel2tex.py -s table.xlsx -o table.tex --sig
 如果这个工具帮助到了你，你喜欢它的话，欢迎打赏！
 
 <!-- ![wechat](../img/wechat.png) ![alipay](../img/alipay.jpg) -->
-<img src="../img/wechat.png" width="100">
-<img src="../img/alipay.jpg" width="100">
+<img src="https://github.com/ZhiyuanLck/excel2tex/blob/master/img/wechat.png" width="100">
+<img src="https://github.com/ZhiyuanLck/excel2tex/blob/master/img/alipay.jpg" width="100">
