@@ -5,8 +5,7 @@ class Setting:
 
     def output_setting(self, colors):
         out = self.get_setting() + self.get_color(colors)
-#          with open(self.args.setting, 'w', encoding=self.args.encoding) as f:
-        with open('abc.tex', 'w', encoding=self.args.encoding) as f:
+        with open(self.args.setting, 'w', encoding=self.args.encoding) as f:
             f.write(out)
 
     def get_color(self, colors):
