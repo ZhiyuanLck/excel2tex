@@ -71,13 +71,4 @@ class Setting:
 \newcommand{\dfill}[4]{%
   \leaderfill{\hdp{#1}{#2}{#3}{#4}}%
 }
-
-%% vline settings
-% #1 rule width #2 color
-\newcommand{\beforevline}[2]{%
-  \global\setlength\arrayrulewidth{#1}\arrayrulecolor{#2}%
-}
-\newcommand{\aftervline}{%
-  \global\setlength\arrayrulewidth{0.4pt}\arrayrulecolor{black}%
-}
 '''
