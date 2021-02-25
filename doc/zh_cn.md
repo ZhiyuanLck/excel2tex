@@ -71,7 +71,7 @@ usage: excel2tex.py [-h] [-s SOURCE] [-o TARGET] [--setting SETTING] [--sig] [-m
   -e, --excel-format    使用所有格式
 ```
 
-如果你是windows用户且系统中没有python环境，这里提供了一个[二进制可执行文件](https://github.com/ZhiyuanLck/excel2tex/releases/tag/0.1)（落后于当前版本）使用
+如果你是windows用户且系统中没有python环境，这里提供了一个[二进制可执行文件](https://github.com/ZhiyuanLck/excel2tex/releases/tag/v1.1)使用
 
 ### 简单用法
 
