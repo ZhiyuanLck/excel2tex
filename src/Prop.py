@@ -34,6 +34,7 @@ class TextProp:
         text = text.replace('%', r'\%')
         # inline math
         if not cell.args.math:
+            text = text.replace('_', r'\_')
             text = text.replace('$', r'\$')
         # line break
         text = text.replace('\n', r' \\')
